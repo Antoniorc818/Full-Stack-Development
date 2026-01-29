@@ -1,0 +1,18 @@
+[
+  {
+    "code": "paris",
+    "name": "Paris Getaway",
+    "length": "5 days",
+    "price": "$1,999",
+    "image": "paris.jpg",
+    "description": "Experience the romance of Paris."
+  },
+  {
+    "code": "london",
+    "name": "London Adventure",
+    "length": "7 days",
+    "price": "$2,299",
+    "image": "london.jpg",
+    "description": "Explore historic London."
+  }
+]
