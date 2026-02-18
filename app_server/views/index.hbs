@@ -1,0 +1,28 @@
+{{!-- Use the layout.hbs as the main template --}}
+{{!< layout}}
+
+<section class="hero">
+  <h1>{{title}}</h1>
+  <p>{{subtitle}}</p>
+  <a href="/packages" class="btn">Explore Packages</a>
+</section>
+
+<section class="featured-packages">
+  <h2>Featured Getaways</h2>
+  <div class="packages-container">
+    {{#each packages}}
+      <div class="package-card">
+        <img src="{{this.image}}" alt="{{this.name}}">
+        <h3>{{this.name}}</h3>
+        <p>{{this.description}}</p>
+        <p class="price">${{this.price}}</p>
+        <a href="/packages/{{this.id}}" class="btn">Book Now</a>
+      </div>
+    {{/each}}
+  </div>
+</section>
+
+<section class="about">
+  <h2>About Travlr Getaways</h2>
+  <p>At Travlr, we help you find the perfect vacation experience. From beaches to city tours, your adventure starts here!</p>
+</section>
