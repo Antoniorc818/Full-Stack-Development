@@ -1,50 +1,50 @@
-// app/app.js
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
-// Database connection
-require('../app_api/models/db');  // connects to MongoDB
+require('../app_api/models/db');
 require('../app_api/models/trips');
 
-// Server-rendered routes
 const indexRouter = require('../app_server/routes/index');
 const travelRouter = require('../app_server/routes/travel');
-
-// API routes
-const apiRouter = require('../app_api/routes/index');  // API endpoints
+const apiRouter = require('../app_api/routes/index');
 
 const app = express();
 const port = 3000;
 
-// View engine
-app.set('views', path.join(__dirname, '../app_server/views'));
-app.set('view engine', 'hbs');
+/* Middleware  */
 
-// Static files
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+/* Static Files  */
+
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Server-side routes
+/* Routes  */
+
 app.use('/', indexRouter);
 app.use('/travel', travelRouter);
-
-// API route
 app.use('/api', apiRouter);
 
-// 404 handler
+/*  404 Handler */
+
 app.use((req, res) => {
-  // If API route, return JSON
+
   if (req.originalUrl.startsWith('/api')) {
     return res.status(404).json({
       message: 'API endpoint not found'
     });
   }
 
-  // Render website error page
-  res.status(404).render('error', { title: 'Page Not Found' });
+  res.status(404).render('error', {
+    title: 'Page Not Found'
+  });
 });
 
+/* Server Start */
 
-// Start server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });

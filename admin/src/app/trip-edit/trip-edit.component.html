@@ -1,0 +1,33 @@
+<div class="card shadow p-4 mb-4">
+
+<h3>Trip Editor</h3>
+
+<form (ngSubmit)="saveTrip()">
+
+<input class="form-control mb-2"
+[(ngModel)]="editTrip.name"
+name="name"
+placeholder="Trip Name">
+
+<textarea class="form-control mb-2"
+[(ngModel)]="editTrip.description"
+name="description"
+placeholder="Description">
+</textarea>
+
+<input class="form-control mb-2"
+[(ngModel)]="editTrip.price"
+name="price"
+placeholder="Price">
+
+<input class="form-control mb-2"
+[(ngModel)]="editTrip.length"
+name="length"
+placeholder="Length">
+
+<button class="btn btn-success w-100">
+Save Trip
+</button>
+
+</form>
+</div>

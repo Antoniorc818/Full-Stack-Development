@@ -1,0 +1,33 @@
+<div class="card shadow-sm mb-3">
+
+  <div class="card-body">
+
+    <h5 class="card-title">
+      {{ trip?.name }}
+    </h5>
+
+    <p class="card-text">
+      {{ trip?.description }}
+    </p>
+
+    <p class="text-muted mb-3">
+      Price: {{ trip?.price }} |
+      Length: {{ trip?.length }}
+    </p>
+
+    <div class="d-flex justify-content-end gap-2">
+
+      <button class="btn btn-warning btn-sm"
+              (click)="editTrip()">
+        Edit
+      </button>
+
+      <button class="btn btn-danger btn-sm"
+              (click)="deleteTrip()">
+        Delete
+      </button>
+
+    </div>
+
+  </div>
+</div>

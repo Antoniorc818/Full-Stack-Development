@@ -1,0 +1,24 @@
+<h2>Available Trips</h2>
+
+<button class="btn btn-primary mb-3"
+        (click)="showAddForm()">
+Add New Trip
+</button>
+
+<!-- Edit / Add Form -->
+<app-trip-edit
+  *ngIf="showEdit"
+  [trip]="selectedTrip"
+  (tripSaved)="onTripSaved()">
+</app-trip-edit>
+
+<!-- Trip Cards -->
+<div class="container mt-3">
+
+  <app-trip-card
+    *ngFor="let trip of trips"
+    [trip]="trip"
+    (edit)="onEditTrip($event)">
+  </app-trip-card>
+
+</div>
