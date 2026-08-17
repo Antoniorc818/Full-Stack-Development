@@ -62,19 +62,39 @@
 tripIndex.search('par')
 <span class="cmt">// -&gt; ['Paris Getaway', 'Paris Romance Weekend', ...]</span></div>
 
-    <div class="stats">
-      <div class="stat"><span class="num">~300x</span><span class="lbl">faster than linear scan at 50,000 trips</span></div>
-      <div class="stat"><span class="num">O(k)</span><span class="lbl">prefix lookup vs. O(n) scan</span></div>
-    </div>
+    <p>I wrote a standalone benchmark script (<code>scripts/benchmark-search.js</code>) that generates synthetic trip data at increasing scale and times the trie against the linear scan it replaced, rather than just asserting it would be faster:</p>
 
-    <p>The index is built on the backend at startup and exposed through a new <code>/api/trips/search</code> endpoint, used by a debounced search box I wired into the Angular admin trips component. I also wrote a benchmark script (<code>scripts/benchmark-search.js</code>) comparing the trie against the old linear scan as trip count scales up, which is where the roughly 300x figure at 50,000 trips came from.</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Trips indexed</th>
+          <th class="num">Linear scan (avg ms/query)</th>
+          <th class="num">Trie search (avg ms/query)</th>
+          <th class="num">Speedup</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>100</td><td class="num">0.2160</td><td class="num">0.0024</td><td class="num">89.3x</td></tr>
+        <tr><td>1,000</td><td class="num">0.3241</td><td class="num">0.0042</td><td class="num">77.6x</td></tr>
+        <tr><td>10,000</td><td class="num">1.6007</td><td class="num">0.0036</td><td class="num">446.8x</td></tr>
+        <tr><td>50,000</td><td class="num">5.3172</td><td class="num">0.0169</td><td class="num">314.2x</td></tr>
+      </tbody>
+    </table>
+
+    <p>The trade-off I anticipated in the Module One enhancement plan is a small amount of extra memory to hold the index in exchange for search time that depends on the length of the query rather than the size of the catalog &mdash; the trie stays relatively flat as trip count grows while the linear scan steadily slows down.</p>
+
+    <p>The index is built on the backend at startup and exposed through a new <code>/api/trips/search</code> endpoint, used by a debounced search box I wired into the Angular admin trips component, updated incrementally whenever a trip is added, modified, or deleted rather than rebuilt from scratch on each request.</p>
 
     <h2>Course Outcomes</h2>
-    <p>This enhancement aligns with <strong>Course Outcome 3</strong>, using algorithmic principles to design and evaluate a solution while managing the trade-off between memory usage (the trie's index) and lookup speed, and <strong>Course Outcome 4</strong>, using a well-founded technique to deliver a measurable improvement.</p>
+    <p>This enhancement aligns with <strong>Course Outcome 3</strong>, using algorithmic principles to design and evaluate a solution while managing the trade-off between memory usage (the trie's index) and lookup speed, and <strong>Course Outcome 4</strong>, using a well-founded technique to deliver a measurable improvement, integrated end to end from the backend index through the API route to a working search box in the admin UI.</p>
+    <p>One update to the original plan: I hadn't initially specified how the index stays accurate once trips are added, renamed, or removed after the server starts &mdash; the Module One pseudocode focused mainly on building and benchmarking the trie. In practice, before an update finishes I fetch the trip's previous state so the old name/resort can be removed from the index before the new values go in, and a delete fully removes its entries. That's a small extension of the original scope, but it's still an algorithmic design decision about maintaining the data structure, not a separate feature.</p>
 
     <h2>Reflection</h2>
     <p>I went in assuming the trie would be faster and treated the benchmark as a formality &mdash; but actually running it and watching the gap widen as trip count scaled up made the improvement concrete in a way the Big-O argument alone hadn't. That's a habit I want to keep: measure the claim, don't just derive it.</p>
-    <p>While testing end-to-end locally (search, add, edit, delete), I also found and fixed two pre-existing bugs unrelated to search itself: <code>authentication.service.ts</code> was using relative URLs instead of the backend's absolute URL, and the trip-edit and trip-card components were sending MongoDB's internal <code>_id</code> instead of the trip's <code>code</code> field to routes keyed on code. Neither was caused by this enhancement, but both surfaced while exercising the app to verify search worked, and leaving them in place would have undermined the verification itself.</p>
+    <p>Two things stood out while building this. First, route ordering: Express matches routes in registration order, so <code>GET /trips/search</code> has to be declared before the existing <code>GET /trips/:tripCode</code>, or every search request gets swallowed as if "search" were a trip code. I caught this before it shipped, but it was a good reminder that adding an endpoint to an existing REST API takes more than writing the handler.</p>
+    <p>Second, a test that initially looked like a bug in my own remove logic: renaming a trip seemed to leave the old name searchable. The project's <code>asyncHandler</code> wrapper (from Milestone Two) doesn't return the promise from the controller function, which is correct for how Express calls route handlers, but it meant my test moved on before the controller had actually finished. After isolating the trie by itself and confirming it removed entries correctly, I traced the real issue to the test harness and changed it to wait for a signal from <code>res.json()</code> instead of the controller call directly. A failing test doesn't always mean the code under test is wrong.</p>
+    <p>The trie also keeps nodes in memory permanently even after every trip using them is removed, which is a reasonable trade-off for an admin tool with a modest number of trips, but would need trimming logic under much higher churn. I documented that limitation directly in the code rather than leaving it silent &mdash; not every inefficiency needs fixing right away, but it does need to be named.</p>
+    <p>While testing end-to-end locally (search, add, edit, delete against the real Angular admin UI, not just scripted tests), I also found and fixed two pre-existing bugs unrelated to search itself: <code>authentication.service.ts</code> was using relative URLs instead of the backend's absolute URL, and the trip-edit and trip-card components were sending MongoDB's internal <code>_id</code> instead of the trip's <code>code</code> field to routes keyed on code, causing edits and deletes to fail with 404s. Neither was caused by this enhancement, but both surfaced while exercising the app to verify the index-syncing logic under real conditions, and leaving them in place would have undermined that verification &mdash; renaming a trip through the UI now correctly removes it from search under the old name and makes it findable under the new one.</p>
 
     <div class="actions">
       <a class="btn primary" href="https://github.com/Antoniorc818/Full-Stack-Development">View source on GitHub</a>
