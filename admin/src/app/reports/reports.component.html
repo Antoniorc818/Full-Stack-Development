@@ -1,0 +1,24 @@
+<h2>Trips by Resort</h2>
+<p class="text-muted">Average price and length, computed by the MongoDB aggregation pipeline.</p>
+
+<p *ngIf="loading">Loading report...</p>
+<p *ngIf="error" class="text-danger">{{ error }}</p>
+
+<table class="table table-striped" *ngIf="!loading && !error">
+  <thead>
+    <tr>
+      <th>Resort</th>
+      <th>Trips</th>
+      <th>Avg. Price per Person</th>
+      <th>Avg. Length (days)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of report">
+      <td>{{ row.resort }}</td>
+      <td>{{ row.tripCount }}</td>
+      <td>{{ row.avgPricePerPerson | currency }}</td>
+      <td>{{ row.avgLengthDays }}</td>
+    </tr>
+  </tbody>
+</table>

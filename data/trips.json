@@ -1,0 +1,22 @@
+[
+  {
+    "code": "paris",
+    "name": "Paris Getaway",
+    "length": "5 days",
+    "start": "2026-06-01T00:00:00.000Z",
+    "resort": "Paris Central Hotel",
+    "perPerson": 1999,
+    "image": "/images/paris.jpg",
+    "description": "Experience the romance of Paris."
+  },
+  {
+    "code": "rome",
+    "name": "Rome Adventure",
+    "length": "7 days",
+    "start": "2026-07-10T00:00:00.000Z",
+    "resort": "Roman Historic Hotel",
+    "perPerson": 2299,
+    "image": "/images/rome.jpg",
+    "description": "Explore historic Rome."
+  }
+]
