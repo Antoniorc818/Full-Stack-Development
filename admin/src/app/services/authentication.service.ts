@@ -29,13 +29,13 @@ export class AuthenticationService {
     }
   }
 
-  public login(user: { email: string; password: string }): Promise<any> {
-    return this.http.post('/api/login', user).toPromise()
+ public login(user: { email: string; password: string }): Promise<any> {
+  return this.http.post('http://localhost:3000/api/login', user).toPromise()
       .then((data: any) => this.saveToken(data.token));
   }
 
   public register(user: { name: string; email: string; password: string }): Promise<any> {
-    return this.http.post('/api/register', user).toPromise()
+  return this.http.post('http://localhost:3000/api/register', user).toPromise()
       .then((data: any) => this.saveToken(data.token));
   }
 

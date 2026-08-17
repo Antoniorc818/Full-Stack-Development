@@ -5,6 +5,14 @@
 Add New Trip
 </button>
 
+<div class="mb-3">
+  <input type="text"
+         class="form-control"
+         placeholder="Search trips by name or resort..."
+         [ngModel]="searchQuery"
+         (ngModelChange)="onSearchChange($event)">
+</div>
+
 <!-- Edit / Add Form -->
 <app-trip-edit
   *ngIf="showEdit"

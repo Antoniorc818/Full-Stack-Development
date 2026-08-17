@@ -25,7 +25,7 @@ export class TripCardComponent {
 
     if(!confirm("Delete trip?")) return;
 
-    this.tripService.deleteTrip(this.trip._id)
+    this.tripService.deleteTrip(this.trip.code)
       .subscribe(()=>{
         this.deleted.emit();
       });

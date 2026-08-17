@@ -10,6 +10,21 @@ require('../app_api/models/trips');
 require('../app_api/models/user');
 require('../app_api/config/passport');
 
+const mongoose = require('mongoose');
+const Trip = mongoose.model('Trip');
+const tripIndex = require('../app_api/utils/tripIndex');
+
+// Build the in-memory trie search index from whatever is already in the
+// database once the connection is open, so search works immediately
+// without waiting on the first write to each trip.
+mongoose.connection.once('open', async () => {
+  const trips = await Trip.find({});
+  tripIndex.buildIndex(trips);
+});
+
+const jwtConfig = require('../app_api/config/auth');
+const { errorHandler } = require('../app_api/middleware/errorHandler');
+
 const indexRouter = require('../app_server/routes/index');
 const travelRouter = require('../app_server/routes/travel');
 const apiRouter = require('../app_api/routes/index');
@@ -30,18 +45,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/', indexRouter);
 app.use('/travel', travelRouter);
 
-/* JWT Protection for API Routes */
-app.use('/api',
-  expressJwt({
-    secret: process.env.JWT_SECRET || "MY_SUPER_SECRET_KEY",
-    algorithms: ['HS256']
-  }).unless({
-    path: [
-      '/api/login',
-      '/api/register'
-    ]
-  })
-);
+
 
 /* API Routes */
 app.use('/api', apiRouter);
@@ -53,6 +57,9 @@ app.use((req, res) => {
   }
   res.status(404).render('error', { title: 'Page Not Found' });
 });
+
+/* Centralized Error Handler (must be last) */
+app.use(errorHandler);
 
 /* Server Start */
 app.listen(port, () => {

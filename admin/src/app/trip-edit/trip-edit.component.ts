@@ -56,7 +56,7 @@ export class TripEdit implements OnChanges {
     if(this.editTrip._id){
 
       this.tripService.updateTrip(
-        this.editTrip._id,
+        this.editTrip.code,
         this.editTrip
       ).subscribe({
         next:()=>{

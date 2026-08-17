@@ -25,6 +25,17 @@ export class TripService {
     return this.http.get(this.apiUrl);
   }
 
+  getResortReport(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/reports/by-resort`);
+  }
+
+  searchTrips(query: string): Observable<any> {
+    if (!query || !query.trim()) {
+      return this.getTrips();
+    }
+    return this.http.get(`${this.apiUrl}/search`, { params: { q: query.trim() } });
+  }
+
   getTrip(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/${id}`);
   }
