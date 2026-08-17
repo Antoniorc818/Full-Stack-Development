@@ -97,7 +97,8 @@ tripIndex.search('par')
     <p>While testing end-to-end locally (search, add, edit, delete against the real Angular admin UI, not just scripted tests), I also found and fixed two pre-existing bugs unrelated to search itself: <code>authentication.service.ts</code> was using relative URLs instead of the backend's absolute URL, and the trip-edit and trip-card components were sending MongoDB's internal <code>_id</code> instead of the trip's <code>code</code> field to routes keyed on code, causing edits and deletes to fail with 404s. Neither was caused by this enhancement, but both surfaced while exercising the app to verify the index-syncing logic under real conditions, and leaving them in place would have undermined that verification &mdash; renaming a trip through the UI now correctly removes it from search under the old name and makes it findable under the new one.</p>
 
     <div class="actions">
-      <a class="btn primary" href="https://github.com/Antoniorc818/Full-Stack-Development">View source on GitHub</a>
+      <a class="btn primary" href="https://github.com/Antoniorc818/Full-Stack-Development">View enhanced source on GitHub</a>
+      <a class="btn ghost" href="https://github.com/Antoniorc818/Full-Stack-Development/tree/pre-enhancement">View original (pre-enhancement) code</a>
       <a class="btn ghost" href="databases.html">Next: Databases →</a>
     </div>
   </section>
