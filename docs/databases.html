@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Databases — Antonio Curran</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="wrap">
+    <a href="index.html" class="brand">Antonio Curran</a>
+    <ul class="navlinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="software-design.html">Software Design</a></li>
+      <li><a href="algorithms.html">Algorithms</a></li>
+      <li><a href="databases.html" class="active">Databases</a></li>
+      <li><a href="code-review.html">Code Review</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="pass">
+    <div class="pass-main">
+      <span class="eyebrow">Enhancement Three</span>
+      <h1>Databases</h1>
+      <div class="tag-row">
+        <span class="tag">MongoDB / Mongoose</span>
+        <span class="tag">Aggregation pipeline</span>
+        <span class="tag">Schema validation</span>
+      </div>
+    </div>
+    <div class="pass-side">
+      <div>
+        <div class="pass-field">Artifact</div>
+        <div class="pass-value">Travlr Getaways</div>
+      </div>
+      <div>
+        <div class="pass-field">Originally built</div>
+        <div class="pass-value">CS 465</div>
+      </div>
+      <div>
+        <div class="pass-field">Status</div>
+        <div class="pass-value">Completed</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="block">
+    <h2>Artifact Description</h2>
+    <p>The artifact for this milestone is the data layer of Travlr Getaways: the Trip and User Mongoose schemas, the trip CRUD controllers, and the MongoDB connection setup, which were largely unchanged from the original CS 465 version before this enhancement.</p>
+
+    <h2>Justification for Inclusion</h2>
+    <p>The original database layer validated almost nothing beyond checking that a field existed, had no indexes to support the queries the app actually runs, couldn't answer any aggregate business questions, and had a MongoDB connection string hardcoded directly in source.</p>
+
+    <div class="codepanel"><span class="cmt">// before: bare required-field checks only</span>
+perPerson: { type: Number, required: true, min: 0 }
+
+<span class="cmt">// after: real constraints</span>
+perPerson: {
+  type: Number, required: true,
+  min: [0, 'Price per person cannot be negative'],
+  max: [100000, 'Price per person exceeds the allowed maximum']
+}
+
+<span class="cmt">// added: compound index matching actual query patterns</span>
+tripSchema.index({ resort: 1, start: 1 });</div>
+
+    <p>Four changes: real validation (length/pattern checks on <code>code</code>, <code>name</code>, <code>resort</code>, <code>description</code>; a regex on <code>length</code>; min/max bounds on price); a compound index on <code>resort</code> and <code>start</code>, the two fields the admin SPA's search and the new report both query against; an aggregation pipeline that groups trips by resort and computes trip count, average price, and average length, exposed through <code>/api/trips/reports/by-resort</code> and a small Angular reporting page; and moving the MongoDB connection string into environment configuration, the same pattern already used for the JWT secret.</p>
+
+    <h2>Course Outcomes</h2>
+    <p>This aligns with <strong>Course Outcome 4</strong>, using well-founded tools and techniques to implement a database solution that delivers real value, and <strong>Course Outcome 5</strong>, building a security mindset around data and resources.</p>
+
+    <h2>Reflection</h2>
+    <p>The trickiest part was the aggregation pipeline's average trip length: <code>length</code> is stored as free text like "5 days" rather than a number, so I couldn't <code>$avg</code> it directly. I added a stage that splits the string on the space and converts the first piece to an integer using <code>$split</code> and <code>$convert</code> before grouping &mdash; a reminder that schema decisions made early have downstream costs when you want to do math on that field later.</p>
+    <p>I also ran into a build issue unrelated to the database work while wiring up the new reports page: the Angular root component file had the wrong content in it, and the app's router and forms providers weren't being registered at bootstrap. Neither was caused by this enhancement, but the reports page couldn't render without both fixed, so I corrected them as part of this milestone.</p>
+
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/Antoniorc818/Full-Stack-Development">View source on GitHub</a>
+      <a class="btn ghost" href="code-review.html">Next: Code Review →</a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Antonio Curran · CS 499 Capstone · Southern New Hampshire University · <a href="https://github.com/Antoniorc818/Full-Stack-Development">Source code on GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

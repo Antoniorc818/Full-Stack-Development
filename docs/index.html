@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antonio Curran — CS 499 ePortfolio</title>
+<meta name="description" content="Antonio Curran's Computer Science capstone ePortfolio — software design, algorithms, and database enhancements to Travlr Getaways.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="wrap">
+    <a href="index.html" class="brand">Antonio Curran</a>
+    <ul class="navlinks">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="software-design.html">Software Design</a></li>
+      <li><a href="algorithms.html">Algorithms</a></li>
+      <li><a href="databases.html">Databases</a></li>
+      <li><a href="code-review.html">Code Review</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">CS 499 · Computer Science Capstone ePortfolio</span>
+    <h1>Antonio Curran</h1>
+    <p class="lede">Computer Science student at Southern New Hampshire University, heading toward a career in data science. This ePortfolio documents three enhancements made to the same application, Travlr Getaways, across software design and engineering, algorithms and data structures, and databases.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="route">
+    <div class="route-line" aria-hidden="true"></div>
+    <div class="route-stops">
+      <a class="stop" href="software-design.html">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <span class="stop-label">Enhancement One</span>
+        <h3 class="stop-title">Software Design &amp; Engineering</h3>
+        <p class="stop-desc">Removed dead code, centralized error handling, and closed a hardcoded-secret gap in the Express backend.</p>
+        <span class="stop-status">Completed · Submitted</span>
+      </a>
+      <a class="stop" href="algorithms.html">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <span class="stop-label">Enhancement Two</span>
+        <h3 class="stop-title">Algorithms &amp; Data Structures</h3>
+        <p class="stop-desc">Replaced a linear trip search with a trie-based prefix index, benchmarked at scale.</p>
+        <span class="stop-status">Completed · Submitted</span>
+      </a>
+      <a class="stop" href="databases.html">
+        <span class="stop-dot" aria-hidden="true"></span>
+        <span class="stop-label">Enhancement Three</span>
+        <h3 class="stop-title">Databases</h3>
+        <p class="stop-desc">Added schema validation, a compound index, and a resort-level aggregation report.</p>
+        <span class="stop-status">Completed</span>
+      </a>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <section class="block">
+    <span class="eyebrow">Professional Self-Assessment</span>
+    <p>This capstone changed how I think about the work more than I expected going in. Coming into CS 499, I thought of the course as a formality at the end of the degree, a chance to tidy up an old project. What it actually became was a full pass through one real codebase, Travlr Getaways, done the way a working developer would do it: review first, plan second, and only then touch the code, with every change backed by a reason I could defend to someone else.</p>
+
+    <h2>Collaborating in a Team Environment</h2>
+    <p>This capstone is individual work, so the collaboration here took a different shape than a group project: it ran through the code review process itself and through instructor feedback across milestones. Before I changed a single line, I recorded a code review walkthrough of the unenhanced Travlr Getaways codebase, worked through a structured checklist (structure, logic, efficiency, security, testing, documentation), and laid out a plan for someone else, my instructor, to evaluate before I acted on it. Each milestone since then has followed the same pattern: submit, get feedback, incorporate it into the next stage.</p>
+
+    <h2>Communicating with Stakeholders</h2>
+    <p>Every milestone required a narrative aimed at a reader who wasn't going to just read the diff and infer my reasoning. The code review video was framed for peers or a manager, not a fellow specialist, meaning I had to explain why a hardcoded JWT secret matters without assuming the audience already cared about authentication internals. The written narratives had to justify a technical decision, like replacing a linear scan with a trie, in terms of what it actually changes for the product, not just the algorithm. Writing for that audience repeatedly across four milestones is what sharpened it into a habit.</p>
+
+    <h2>Data Structures and Algorithms</h2>
+    <p>The algorithms and data structures enhancement is where this outcome came together directly. Trip search in Travlr Getaways only supported an exact match on trip code; anything else meant scanning every record. I built a trie to index trip names and resorts, and rather than assume the complexity argument alone was convincing, I benchmarked it against the old linear scan as trip count scaled up, which showed roughly a 300x improvement at 50,000 trips. That habit, don't claim a data structure is better, prove it, is the biggest thing I'm taking out of this category.</p>
+
+    <h2>Software Engineering and Database</h2>
+    <p>I made a deliberate choice to enhance one artifact, Travlr Getaways, across all three categories instead of spreading the work across three separate projects. The software design pass removed dead code and centralized error handling in the Express backend; the database pass added real schema validation, a compound index matching how the app actually queries data, and an aggregation pipeline reporting average price and trip length by resort. Doing both passes on the same codebase is what showed me software engineering and database work aren't really separate skills in practice: a schema decision shows up as an API bug three files away, and a query pattern I hadn't planned for shows up as a missing index.</p>
+
+    <h2>Security</h2>
+    <p>Security is the outcome I had the least evidence for going in, and where the code review process paid off most directly. Reviewing my own code with a security-specific checklist item in mind, rather than just reading it for correctness, is what surfaced a hardcoded fallback JWT secret and a hardcoded MongoDB connection string, both obvious once I was actually looking for them. Fixing both, and adding schema-level validation so bad input gets rejected instead of quietly stored, gave me a concrete answer to how I think about security in my own code.</p>
+
+    <h2>How the Artifacts Fit Together</h2>
+    <p>The three enhancements above are presented in the order I actually built them: software design first, because the other two categories needed a stable, non-duplicated backend to build on; algorithms and data structures second, because it's the piece users directly interact with; and databases last, on purpose, because it touches the schema the other two categories already depend on. Read together with the code review, they're meant to show that I can look at an existing, working system, find its real weak points, and improve it without breaking what already worked.</p>
+    <p>This capstone is also where my sense of what data science actually requires sharpened: benchmarking claims instead of asserting them, writing for a reader who wasn't in my head while I coded, reviewing my own work the way an outside reviewer would. Those are the habits I'm bringing into whatever comes next.</p>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Antonio Curran · CS 499 Capstone · Southern New Hampshire University · <a href="https://github.com/Antoniorc818/Full-Stack-Development">Source code on GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
