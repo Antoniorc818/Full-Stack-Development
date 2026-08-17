@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algorithms &amp; Data Structures — Antonio Curran</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="wrap">
+    <a href="index.html" class="brand">Antonio Curran</a>
+    <ul class="navlinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="software-design.html">Software Design</a></li>
+      <li><a href="algorithms.html" class="active">Algorithms</a></li>
+      <li><a href="databases.html">Databases</a></li>
+      <li><a href="code-review.html">Code Review</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="pass">
+    <div class="pass-main">
+      <span class="eyebrow">Enhancement Two</span>
+      <h1>Algorithms &amp; Data Structures</h1>
+      <div class="tag-row">
+        <span class="tag">Trie / prefix tree</span>
+        <span class="tag">Benchmarking</span>
+        <span class="tag">Angular</span>
+      </div>
+    </div>
+    <div class="pass-side">
+      <div>
+        <div class="pass-field">Artifact</div>
+        <div class="pass-value">Travlr Getaways</div>
+      </div>
+      <div>
+        <div class="pass-field">Originally built</div>
+        <div class="pass-value">CS 465</div>
+      </div>
+      <div>
+        <div class="pass-field">Status</div>
+        <div class="pass-value">Completed</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="block">
+    <h2>Artifact Description</h2>
+    <p>The artifact for this milestone is the trip search functionality of Travlr Getaways. Before this enhancement, the only way to retrieve a specific trip through the API was an exact match on its trip code, using <code>Trip.findOne</code> against the <code>code</code> field &mdash; no way to search by name or resort, no partial matching, no autocomplete.</p>
+
+    <h2>Justification for Inclusion</h2>
+    <p>The missing capability wasn't a bug so much as a scaling problem waiting to happen. Without an index, the only option to add name/resort search would have been a linear scan across every trip document &mdash; fine at a handful of trips, but it gets slower in direct proportion to how many trips exist, which matters a lot for something like autocomplete running a new search on every keystroke.</p>
+    <p>To fix that, I built a trie &mdash; a prefix tree &mdash; that indexes trip names and resorts (<code>app_api/utils/trie.js</code> and <code>tripIndex.js</code>). A trie stores strings letter by letter down a tree structure, so a prefix search means walking one path in the tree instead of scanning every record.</p>
+
+    <div class="codepanel"><span class="cmt">// prefix lookup: O(k) for a query of length k</span>
+<span class="cmt">// instead of O(n) linear scan across n trips</span>
+tripIndex.search('par')
+<span class="cmt">// -&gt; ['Paris Getaway', 'Paris Romance Weekend', ...]</span></div>
+
+    <div class="stats">
+      <div class="stat"><span class="num">~300x</span><span class="lbl">faster than linear scan at 50,000 trips</span></div>
+      <div class="stat"><span class="num">O(k)</span><span class="lbl">prefix lookup vs. O(n) scan</span></div>
+    </div>
+
+    <p>The index is built on the backend at startup and exposed through a new <code>/api/trips/search</code> endpoint, used by a debounced search box I wired into the Angular admin trips component. I also wrote a benchmark script (<code>scripts/benchmark-search.js</code>) comparing the trie against the old linear scan as trip count scales up, which is where the roughly 300x figure at 50,000 trips came from.</p>
+
+    <h2>Course Outcomes</h2>
+    <p>This enhancement aligns with <strong>Course Outcome 3</strong>, using algorithmic principles to design and evaluate a solution while managing the trade-off between memory usage (the trie's index) and lookup speed, and <strong>Course Outcome 4</strong>, using a well-founded technique to deliver a measurable improvement.</p>
+
+    <h2>Reflection</h2>
+    <p>I went in assuming the trie would be faster and treated the benchmark as a formality &mdash; but actually running it and watching the gap widen as trip count scaled up made the improvement concrete in a way the Big-O argument alone hadn't. That's a habit I want to keep: measure the claim, don't just derive it.</p>
+    <p>While testing end-to-end locally (search, add, edit, delete), I also found and fixed two pre-existing bugs unrelated to search itself: <code>authentication.service.ts</code> was using relative URLs instead of the backend's absolute URL, and the trip-edit and trip-card components were sending MongoDB's internal <code>_id</code> instead of the trip's <code>code</code> field to routes keyed on code. Neither was caused by this enhancement, but both surfaced while exercising the app to verify search worked, and leaving them in place would have undermined the verification itself.</p>
+
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/Antoniorc818/Full-Stack-Development">View source on GitHub</a>
+      <a class="btn ghost" href="databases.html">Next: Databases →</a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Antonio Curran · CS 499 Capstone · Southern New Hampshire University · <a href="https://github.com/Antoniorc818/Full-Stack-Development">Source code on GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

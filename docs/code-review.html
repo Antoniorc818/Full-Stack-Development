@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Review — Antonio Curran</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="wrap">
+    <a href="index.html" class="brand">Antonio Curran</a>
+    <ul class="navlinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="software-design.html">Software Design</a></li>
+      <li><a href="algorithms.html">Algorithms</a></li>
+      <li><a href="databases.html">Databases</a></li>
+      <li><a href="code-review.html" class="active">Code Review</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero" style="padding-top:48px;">
+    <span class="eyebrow">Milestone One</span>
+    <h1>Code Review</h1>
+    <p class="lede">A walkthrough of Travlr Getaways as it stood before any enhancement work: existing functionality, a critical code analysis against each category's checklist, and the enhancement plan for all three categories that follow.</p>
+  </header>
+
+  <section class="block">
+    <!--
+      TODO(Antonio): replace this placeholder with your embedded/linked video
+      once it's recorded and hosted (e.g. YouTube, unlisted). Example embed:
+
+      <div style="position:relative; padding-bottom:56.25%; height:0;">
+        <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="CS 499 Milestone One Code Review"
+          style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
+          allowfullscreen></iframe>
+      </div>
+    -->
+    <div class="codepanel" style="text-align:center; padding:48px 22px;">
+      Video not yet linked &mdash; add the YouTube/hosted URL here once the code review is recorded.
+    </div>
+
+    <h2>What the Review Covers</h2>
+    <p>The review runs about 30 minutes, split evenly across the three enhancement categories, following the same structure each time: what the code does right now, what a critical read against the code review checklist (structure, logic, efficiency, security, testing, documentation) turned up, and the specific plan to fix it.</p>
+
+    <div class="tag-row" style="margin-bottom:24px;">
+      <span class="tag">Existing functionality</span>
+      <span class="tag">Code analysis</span>
+      <span class="tag">Planned enhancement</span>
+    </div>
+
+    <h2>Findings by Category</h2>
+    <p><strong>Software Design &amp; Engineering</strong> &mdash; three dead copies of an old travel controller left over from earlier course modules, the same try/catch error-handling pattern repeated in every controller function, and a hardcoded fallback JWT secret.</p>
+    <p><strong>Algorithms &amp; Data Structures</strong> &mdash; trip lookup only supported an exact code match, with no way to search by name or resort short of a linear scan that wouldn't hold up at scale.</p>
+    <p><strong>Databases</strong> &mdash; schema validation limited to required-field checks, no indexing beyond the implicit unique index on trip code, no aggregation capability, and a hardcoded MongoDB connection string.</p>
+    <p>Read the full plan and how each finding was addressed on the <a href="software-design.html">Software Design</a>, <a href="algorithms.html">Algorithms</a>, and <a href="databases.html">Databases</a> pages.</p>
+
+    <div class="actions">
+      <a class="btn ghost" href="index.html">← Back to overview</a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Antonio Curran · CS 499 Capstone · Southern New Hampshire University · <a href="https://github.com/Antoniorc818/Full-Stack-Development">Source code on GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

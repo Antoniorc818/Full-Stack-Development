@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Software Design &amp; Engineering — Antonio Curran</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="wrap">
+    <a href="index.html" class="brand">Antonio Curran</a>
+    <ul class="navlinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="software-design.html" class="active">Software Design</a></li>
+      <li><a href="algorithms.html">Algorithms</a></li>
+      <li><a href="databases.html">Databases</a></li>
+      <li><a href="code-review.html">Code Review</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="pass">
+    <div class="pass-main">
+      <span class="eyebrow">Enhancement One</span>
+      <h1>Software Design &amp; Engineering</h1>
+      <div class="tag-row">
+        <span class="tag">Express / Node.js</span>
+        <span class="tag">JWT auth</span>
+        <span class="tag">Middleware</span>
+      </div>
+    </div>
+    <div class="pass-side">
+      <div>
+        <div class="pass-field">Artifact</div>
+        <div class="pass-value">Travlr Getaways</div>
+      </div>
+      <div>
+        <div class="pass-field">Originally built</div>
+        <div class="pass-value">CS 465</div>
+      </div>
+      <div>
+        <div class="pass-field">Status</div>
+        <div class="pass-value">Completed</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="block">
+    <h2>Artifact Description</h2>
+    <p>The artifact for this milestone is the backend architecture of Travlr Getaways, a full stack trip-booking application originally built in CS 465, Full Stack Development, using Node.js, Express, and MongoDB with Mongoose on the back end and an Angular admin single-page app on the front end. This enhancement touched the Express API layer under <code>app_api</code>: the routes, the trip and auth controllers, and the JWT authentication configuration.</p>
+
+    <h2>Justification for Inclusion</h2>
+    <p>The code review turned up structural problems that are common in real codebases. I initially flagged three copies of a travel controller as dead code, but tracing the actual require chain from <code>app.js</code> more carefully showed that was partially wrong:</p>
+    <div class="codepanel"><span class="cmt">// app.js requires this chain:</span>
+app_server/routes/travel.js  <span class="cmt">// requires ↓</span>
+  → app_server/controllers/travel.js  <span class="cmt">// LIVE — renders the public travel page</span>
+
+<span class="cmt">// genuinely unused, nothing outside them requires either:</span>
+controllers/travel.js              <span class="cmt">// dead</span>
+app/app_server/  (entire tree)     <span class="cmt">// dead — duplicate of app_server/</span>
+
+<span class="cmt">// every trips controller function also repeated this pattern:</span>
+try {
+  const trip = await Trip.findOne({ code: req.params.tripCode });
+  res.status(200).json(trip);
+} catch (err) {
+  res.status(500).json(err);
+}
+
+<span class="cmt">// and the JWT config had a hardcoded fallback</span>
+const secret = process.env.JWT_SECRET || 'MY_SUPER_SECRET_KEY';</div>
+    <p>Catching that first-pass mistake, and re-verifying it against the actual import graph instead of trusting my own initial read, ended up being as much a part of this enhancement as the fix itself. I removed only the two files that were actually dead, left <code>app_server/controllers/travel.js</code> in place since it's genuinely in use, extracted the repeated try/catch pattern into centralized error-handling middleware, and removed the hardcoded JWT fallback in favor of startup validation that fails loudly if <code>JWT_SECRET</code> isn't set.</p>
+    <p>Together these show my ability to identify structural debt in an existing codebase and verify that identification against the code itself, design centralized, reusable logic instead of duplicating it, and apply secure configuration practices instead of hardcoding secrets.</p>
+
+    <h2>Course Outcomes</h2>
+    <p>This enhancement maps to <strong>Course Outcome 4</strong>, using well-founded tools and techniques to make an existing solution more maintainable, and <strong>Course Outcome 5</strong>, developing a security mindset by removing a hardcoded credential and replacing it with fail-fast validation.</p>
+
+    <h2>Reflection</h2>
+    <p>The dead code removal taught me something the code review process itself was supposed to catch: I flagged all three travel.js copies as dead without tracing the require chain all the way through, and only caught that one was live when I went back to actually remove them. That's a real lesson in defensive reading of a codebase, don't delete or claim to have deleted something just because it looks unused, trace the actual import graph first. A wrong assumption at the review step would have carried straight through into a broken app if I'd deleted all three.</p>
+    <p>The error-handling middleware took more thought than expected: I didn't want to leak internal error details to the client, but I also didn't want every failure to collapse into one unhelpful message, so I settled on distinguishing validation errors (422, field-level messages), duplicate-key errors (409), and everything else (a generic 500, no internals leaked).</p>
+    <p>This enhancement set up the other two categories more than I expected. The centralized error handling made it easier to add the search endpoint in the algorithms milestone without repeating the pattern I'd just removed, and the <code>JWT_SECRET</code> environment-variable pattern is exactly what I reused later for the MongoDB connection string in the databases milestone.</p>
+
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/Antoniorc818/Full-Stack-Development">View source on GitHub</a>
+      <a class="btn ghost" href="algorithms.html">Next: Algorithms &amp; Data Structures →</a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Antonio Curran · CS 499 Capstone · Southern New Hampshire University · <a href="https://github.com/Antoniorc818/Full-Stack-Development">Source code on GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
